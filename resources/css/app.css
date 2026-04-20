@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* RTL Support */
+[dir="rtl"] .mary-nav-slot-actions {
+    flex-direction: row-reverse;
+}
+
+/* Custom LMS styles */
+@layer components {
+    .course-card {
+        @apply bg-base-100 rounded-xl shadow hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 overflow-hidden;
+    }
+
+    .stat-card {
+        @apply bg-base-100 rounded-xl p-5 shadow flex items-center gap-4;
+    }
+
+    .lesson-item {
+        @apply flex items-center gap-3 p-3 rounded-lg hover:bg-base-200 cursor-pointer transition-colors;
+    }
+
+    .lesson-item.completed {
+        @apply opacity-70;
+    }
+
+    .quiz-option {
+        @apply border-2 border-base-300 rounded-xl p-4 cursor-pointer transition-all hover:border-primary;
+    }
+
+    .quiz-option.selected {
+        @apply border-primary bg-primary/5;
+    }
+
+    .quiz-option.correct {
+        @apply border-success bg-success/5;
+    }
+
+    .quiz-option.wrong {
+        @apply border-error bg-error/5;
+    }
+
+    /* Progress bar animation */
+    .progress-animated {
+        @apply transition-all duration-500;
+    }
+
+    /* Grade badge colors */
+    .grade-a { @apply bg-success/20 text-success-content; }
+    .grade-b { @apply bg-info/20 text-info-content; }
+    .grade-c { @apply bg-warning/20 text-warning-content; }
+    .grade-d { @apply bg-error/20 text-error-content; }
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    @apply bg-base-300 rounded-full;
+}
+
+/* Arabic font support */
+[lang="ar"] * {
+    font-family: 'Cairo', 'Segoe UI', system-ui, sans-serif;
+}
