@@ -199,16 +199,16 @@ class extends Component {
     </x-header>
 
     {{-- Filters --}}
-    <div class="flex flex-wrap gap-2 mb-4 items-center">
+    <div class="flex flex-col sm:flex-row gap-3 mb-4 sm:items-center">
         <input type="text" wire:model.live.debounce.300ms="search"
                placeholder="Search title or author..."
-               class="input input-bordered input-sm w-56" />
-        <div class="flex flex-wrap gap-1">
+               class="input input-bordered input-sm w-full sm:w-56" />
+        <div class="flex gap-1 overflow-x-auto pb-1 -mx-1 px-1">
             <button wire:click="$set('filterCategory','all')"
-                    class="btn btn-xs {{ $filterCategory === 'all' ? 'btn-primary' : 'btn-ghost' }}">All</button>
+                    class="btn btn-xs shrink-0 {{ $filterCategory === 'all' ? 'btn-primary' : 'btn-ghost' }}">All</button>
             @foreach(App\Models\IslamicBook::$categories as $key => $label)
                 <button wire:click="$set('filterCategory','{{ $key }}')"
-                        class="btn btn-xs {{ $filterCategory === $key ? 'btn-primary' : 'btn-ghost' }}">{{ $label }}</button>
+                        class="btn btn-xs shrink-0 {{ $filterCategory === $key ? 'btn-primary' : 'btn-ghost' }}">{{ $label }}</button>
             @endforeach
         </div>
     </div>

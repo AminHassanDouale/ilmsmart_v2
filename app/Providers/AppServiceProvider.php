@@ -25,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('student', fn($user) => $user->isStudent());
         Gate::define('parent', fn($user) => $user->isParent());
         Gate::define('tutor', fn($user) => $user->isTutor());
+        Gate::define('individual', fn($user) => $user->isIndividual());
 
         // Register policies
         Gate::policy(\App\Models\Course::class, \App\Policies\CoursePolicy::class);

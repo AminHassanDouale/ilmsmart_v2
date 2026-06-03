@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\{Course, Enrollment, Student};
+use App\Notifications\CourseEnrollmentNotification;
 
 class EnrollmentService
 {
@@ -22,13 +23,20 @@ class EnrollmentService
             return $existing;
         }
 
-        return Enrollment::create([
+        $enrollment = Enrollment::create([
             'student_id'       => $student->id,
             'course_id'        => $course->id,
             'enrolled_at'      => now(),
             'progress_percent' => 0,
             'status'           => 'active',
         ]);
+
+        // Notify the student (mail + database)
+        if ($student->user) {
+            $student->user->notify(new CourseEnrollmentNotification($course));
+        }
+
+        return $enrollment;
     }
 
     /**

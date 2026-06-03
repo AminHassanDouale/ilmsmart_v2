@@ -92,6 +92,15 @@ Route::middleware('auth')->group(function () {
         Volt::route('/islamic/books',             'admin.islamic.books')->name('islamic.books');
         Volt::route('/islamic/courses',           'admin.islamic.courses.index')->name('islamic.courses');
         Volt::route('/islamic/courses/{course}/manage', 'admin.islamic.courses.manage')->name('islamic.courses.manage');
+
+        // Programs (bundles of courses with sessions)
+        Volt::route('/programs',                          'admin.programs.index')->name('programs');
+        Volt::route('/programs/{program}/courses',        'admin.programs.courses')->name('programs.courses');
+        Volt::route('/programs/{program}/sessions',       'admin.programs.sessions')->name('programs.sessions');
+        Volt::route('/programs/{program}/enrollments',    'admin.programs.enrollments')->name('programs.enrollments');
+
+        // Subscription history
+        Volt::route('/subscriptions/history',             'admin.subscriptions.history')->name('subscriptions.history');
     });
 
     /*
@@ -106,6 +115,7 @@ Route::middleware('auth')->group(function () {
         Volt::route('/assignments', 'teacher.assignments.index')->name('assignments');
         Volt::route('/quizzes',     'teacher.quizzes.index')->name('quizzes');
         Volt::route('/attendance',  'teacher.attendance.index')->name('attendance');
+        Volt::route('/programs',    'teacher.programs.index')->name('programs');
     });
 
     /*
@@ -117,11 +127,39 @@ Route::middleware('auth')->group(function () {
         Volt::route('/courses',                              'courses.index')->name('courses');
         Volt::route('/courses/{course}',                     'student.courses.show')->name('courses.show');
         Volt::route('/courses/{course}/lessons/{lesson}',    'student.lessons.show')->name('lessons.show');
+        Volt::route('/islamic-courses',                      'student.islamic-courses.index')->name('islamic-courses');
         Volt::route('/live-classes',                         'student.live-classes.index')->name('live-classes');
         Volt::route('/assignments',      'student.assignments.index')->name('assignments');
         Volt::route('/quizzes',          'student.quizzes.index')->name('quizzes');
         Volt::route('/progress',         'student.progress.index')->name('progress');
+        Volt::route('/programs',         'student.programs.index')->name('programs');
+        Volt::route('/programs/{program}','student.programs.show')->name('programs.show');
+        Volt::route('/subscriptions',    'student.subscriptions.index')->name('subscriptions');
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Individual portal (self-paced learners — public users)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('can:individual')->prefix('individual')->name('individual.')->group(function () {
+        Volt::route('/dashboard',                  'individual.dashboard')->name('dashboard');
+        Volt::route('/programs',                   'individual.programs.index')->name('programs');
+        Volt::route('/programs/{program}',         'individual.programs.show')->name('programs.show');
+        Volt::route('/my-programs',                'individual.my-programs')->name('my-programs');
+        Volt::route('/courses',                    'individual.courses.index')->name('courses');
+        Volt::route('/courses/{course}',           'individual.courses.show')->name('courses.show');
+        Volt::route('/subscriptions',              'individual.subscriptions.index')->name('subscriptions');
+        Volt::route('/subscriptions/history',      'individual.subscriptions.history')->name('subscriptions.history');
+        Volt::route('/profile',                    'individual.profile')->name('profile');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Notifications (all authenticated users)
+    |--------------------------------------------------------------------------
+    */
+    Volt::route('/notifications', 'notifications.index')->name('notifications');
 
     /*
     |--------------------------------------------------------------------------

@@ -131,21 +131,31 @@ new class extends Component {
 <div>
     <x-header title="Islamic Courses" subtitle="Manage Islamic learning courses with Quran, Hadith, and Duas content">
         <x-slot:middle class="!justify-end">
-            <x-input placeholder="Search courses..." wire:model.live.debounce="search" icon="o-magnifying-glass" class="w-64" />
+            <x-input placeholder="Search courses..." wire:model.live.debounce="search"
+                     icon="o-magnifying-glass" class="w-full sm:w-64" />
         </x-slot:middle>
         <x-slot:actions>
             <x-select wire:model.live="filterLevel" placeholder="All Levels" :options="[
                 ['id'=>'beginner',     'name'=>'Beginner'],
                 ['id'=>'intermediate', 'name'=>'Intermediate'],
                 ['id'=>'premium',      'name'=>'Premium'],
-            ]" option-value="id" option-label="name" class="select-sm" />
-            <x-button label="New Course" icon="o-plus" wire:click="openCreate" class="btn-primary" />
+            ]" option-value="id" option-label="name" class="select-sm hidden sm:block" />
+            <x-button label="New Course" icon="o-plus" wire:click="openCreate" class="btn-primary btn-sm sm:btn-md" responsive />
         </x-slot:actions>
     </x-header>
 
+    {{-- Mobile filter --}}
+    <div class="sm:hidden mb-4">
+        <x-select wire:model.live="filterLevel" placeholder="All Levels" :options="[
+            ['id'=>'beginner',     'name'=>'Beginner'],
+            ['id'=>'intermediate', 'name'=>'Intermediate'],
+            ['id'=>'premium',      'name'=>'Premium'],
+        ]" option-value="id" option-label="name" />
+    </div>
+
     {{-- Stats row --}}
     @php $courses = $this->courses(); @endphp
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <x-stat title="Total Courses"  :value="$courses->count()" icon="o-cube" />
         <x-stat title="Published"      :value="$courses->where('status','published')->count()" icon="o-check-circle" color="text-success" />
         <x-stat title="Total Enrolled" :value="$courses->sum('enrollments_count')" icon="o-users" />

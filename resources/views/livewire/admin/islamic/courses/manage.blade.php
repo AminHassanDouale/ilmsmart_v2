@@ -280,7 +280,7 @@ new class extends Component {
     </x-header>
 
     {{-- Course info bar --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <x-stat title="Modules"  :value="$this->modules()->count()" icon="o-rectangle-stack" />
         <x-stat title="Lessons"  :value="$this->modules()->sum(fn($m) => $m->lessons->count())" icon="o-book-open" />
         <x-stat title="Enrolled" :value="$course->enrollments()->count()" icon="o-users" />
@@ -301,22 +301,22 @@ new class extends Component {
             @foreach($modules as $modIdx => $module)
                 <x-card>
                     {{-- Module header --}}
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                    <div class="flex items-start sm:items-center justify-between gap-3 mb-4 flex-wrap sm:flex-nowrap">
+                        <div class="flex items-start gap-3 min-w-0 flex-1">
+                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0">
                                 {{ $modIdx + 1 }}
                             </div>
-                            <div>
-                                <h3 class="font-bold">{{ $module->title }}</h3>
+                            <div class="min-w-0">
+                                <h3 class="font-bold text-sm sm:text-base">{{ $module->title }}</h3>
                                 @if($module->description)
-                                    <p class="text-xs text-base-content/50">{{ $module->description }}</p>
+                                    <p class="text-xs text-base-content/50 line-clamp-2">{{ $module->description }}</p>
                                 @endif
                             </div>
                         </div>
-                        <div class="flex gap-2">
-                            <x-button icon="o-plus" label="Add Lesson" wire:click="openCreateLesson({{ $module->id }})" class="btn-ghost btn-sm" />
-                            <x-button icon="o-pencil" wire:click="openEditModule({{ $module->id }})" class="btn-ghost btn-sm" tooltip="Edit Module" />
-                            <x-button icon="o-trash" wire:click="deleteModule({{ $module->id }})" wire:confirm="Delete this module and all its lessons?" class="btn-ghost btn-sm text-error" tooltip="Delete Module" />
+                        <div class="flex gap-1 shrink-0">
+                            <x-button icon="o-plus" label="Add Lesson" wire:click="openCreateLesson({{ $module->id }})" class="btn-ghost btn-sm" responsive />
+                            <x-button icon="o-pencil" wire:click="openEditModule({{ $module->id }})" class="btn-ghost btn-sm" tooltip="Edit" />
+                            <x-button icon="o-trash" wire:click="deleteModule({{ $module->id }})" wire:confirm="Delete this module and all its lessons?" class="btn-ghost btn-sm text-error" tooltip="Delete" />
                         </div>
                     </div>
 
@@ -330,14 +330,14 @@ new class extends Component {
                         <div class="space-y-2">
                             @foreach($module->lessons as $lIdx => $lesson)
                                 @php $meta = $lesson->lesson_meta ?? []; $metaType = $meta['type'] ?? 'custom'; @endphp
-                                <div class="flex items-center gap-3 p-3 rounded-lg bg-base-200/50 hover:bg-base-200 transition-colors">
-                                    <span class="text-xs text-base-content/40 w-5 text-right">{{ $lIdx + 1 }}</span>
+                                <div class="flex items-start gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-base-200/50 hover:bg-base-200 transition-colors">
+                                    <span class="text-xs text-base-content/40 w-5 text-right pt-0.5 hidden sm:block">{{ $lIdx + 1 }}</span>
 
-                                    <x-icon name="{{ $lesson->type_icon }}" class="w-5 h-5 text-base-content/50" />
+                                    <x-icon name="{{ $lesson->type_icon }}" class="w-5 h-5 text-base-content/50 shrink-0 mt-0.5" />
 
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-medium text-sm truncate">{{ $lesson->title }}</p>
-                                        <div class="flex items-center gap-2 mt-0.5">
+                                        <p class="font-medium text-sm leading-tight line-clamp-2 sm:truncate">{{ $lesson->title }}</p>
+                                        <div class="flex items-center flex-wrap gap-1.5 mt-1">
                                             <span class="badge badge-xs {{ $this->islamicTypeBadge($metaType) }}">
                                                 {{ $this->islamicTypeLabel($metaType) }}
                                             </span>
@@ -349,23 +349,21 @@ new class extends Component {
                                                 <span class="text-xs text-base-content/40">{{ ucfirst($meta['category'] ?? '') }}</span>
                                             @elseif($metaType === 'book' && isset($meta['book_id']))
                                                 @php $bk = collect($this->books)->firstWhere('id', $meta['book_id']); @endphp
-                                                <span class="text-xs text-base-content/40">{{ $bk['title'] ?? 'Book #'.$meta['book_id'] }}</span>
+                                                <span class="text-xs text-base-content/40 truncate">{{ $bk['title'] ?? 'Book #'.$meta['book_id'] }}</span>
                                             @endif
                                             @if($lesson->is_free_preview)
-                                                <span class="badge badge-xs badge-success">Free Preview</span>
+                                                <span class="badge badge-xs badge-success">Free</span>
+                                            @endif
+                                            <span @class(['badge badge-xs', 'badge-success'=>$lesson->status==='published', 'badge-ghost'=>$lesson->status==='draft'])>
+                                                {{ ucfirst($lesson->status) }}
+                                            </span>
+                                            @if($lesson->duration_minutes)
+                                                <span class="text-xs text-base-content/40">· {{ $lesson->duration_minutes }}min</span>
                                             @endif
                                         </div>
                                     </div>
 
-                                    <span @class(['badge badge-xs', 'badge-success'=>$lesson->status==='published', 'badge-ghost'=>$lesson->status==='draft'])>
-                                        {{ ucfirst($lesson->status) }}
-                                    </span>
-
-                                    @if($lesson->duration_minutes)
-                                        <span class="text-xs text-base-content/40">{{ $lesson->duration_minutes }}min</span>
-                                    @endif
-
-                                    <div class="flex gap-1">
+                                    <div class="flex gap-0.5 shrink-0">
                                         <x-button icon="o-pencil" wire:click="openEditLesson({{ $lesson->id }})" class="btn-ghost btn-xs" tooltip="Edit" />
                                         <x-button icon="o-trash" wire:click="deleteLesson({{ $lesson->id }})" wire:confirm="Delete this lesson?" class="btn-ghost btn-xs text-error" tooltip="Delete" />
                                     </div>

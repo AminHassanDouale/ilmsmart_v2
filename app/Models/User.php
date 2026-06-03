@@ -32,9 +32,10 @@ class User extends Authenticatable
     // Role helpers
     public function isAdmin(): bool    { return $this->role === 'admin'; }
     public function isTeacher(): bool  { return in_array($this->role, ['teacher', 'tutor']); }
-    public function isStudent(): bool  { return $this->role === 'student'; }
-    public function isParent(): bool   { return $this->role === 'parent'; }
-    public function isTutor(): bool    { return $this->role === 'tutor'; }
+    public function isStudent(): bool    { return $this->role === 'student'; }
+    public function isParent(): bool     { return $this->role === 'parent'; }
+    public function isTutor(): bool      { return $this->role === 'tutor'; }
+    public function isIndividual(): bool { return $this->role === 'individual'; }
 
     public function getFullNameAttribute(): string
     {
@@ -79,5 +80,32 @@ class User extends Authenticatable
     public function announcements()
     {
         return $this->hasMany(Announcement::class);
+    }
+
+    public function programEnrollments()
+    {
+        return $this->hasMany(ProgramEnrollment::class);
+    }
+
+    public function programs()
+    {
+        return $this->belongsToMany(Program::class, 'program_enrollments')
+                    ->withPivot('status','progress_percent','enrolled_at')
+                    ->withTimestamps();
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function subscriptionHistories()
+    {
+        return $this->hasMany(SubscriptionHistory::class)->latest('occurred_at');
+    }
+
+    public function activeSubscription()
+    {
+        return $this->hasOne(Subscription::class)->where('status', 'active');
     }
 }

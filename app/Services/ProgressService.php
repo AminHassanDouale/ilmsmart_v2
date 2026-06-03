@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\{Course, Enrollment, LessonProgress, Student};
+use App\Models\{Course, Enrollment, Lesson, LessonProgress, Student};
+use App\Notifications\CourseCompletedNotification;
+use App\Notifications\LessonCompletedNotification;
 
 class ProgressService
 {
@@ -24,6 +26,11 @@ class ProgressService
 
         $status = $percent >= 100 ? 'completed' : 'active';
 
+        $enrollment = Enrollment::where('student_id', $student->id)
+            ->where('course_id', $course->id)
+            ->first();
+        $wasAlreadyCompleted = $enrollment?->status === 'completed';
+
         Enrollment::where('student_id', $student->id)
             ->where('course_id', $course->id)
             ->update([
@@ -32,9 +39,13 @@ class ProgressService
                 'completed_at'     => $percent >= 100 ? now() : null,
             ]);
 
-        // Award certificate if completed
+        // Award certificate + notify when crossing 100%
         if ($percent >= 100) {
             $this->issueCertificate($student, $course);
+
+            if (!$wasAlreadyCompleted && $student->user) {
+                $student->user->notify(new CourseCompletedNotification($course));
+            }
         }
 
         return $percent;
@@ -45,6 +56,11 @@ class ProgressService
      */
     public function markLessonComplete(Student $student, int $lessonId, int $courseId): void
     {
+        $progress = LessonProgress::where('student_id', $student->id)
+            ->where('lesson_id', $lessonId)
+            ->first();
+        $alreadyCompleted = $progress && $progress->completed;
+
         LessonProgress::updateOrCreate(
             ['student_id' => $student->id, 'lesson_id' => $lessonId],
             [
@@ -57,7 +73,15 @@ class ProgressService
 
         $course = Course::find($courseId);
         if ($course) {
-            $this->updateCourseProgress($student, $course);
+            $percent = $this->updateCourseProgress($student, $course);
+
+            // Only notify on the first completion of this lesson
+            if (!$alreadyCompleted && $student->user) {
+                $lesson = Lesson::find($lessonId);
+                if ($lesson) {
+                    $student->user->notify(new LessonCompletedNotification($lesson, $course, $percent));
+                }
+            }
         }
     }
 

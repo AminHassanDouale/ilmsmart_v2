@@ -55,11 +55,21 @@
         </div>
     </x-slot:brand>
     <x-slot:actions>
+        @auth
+            <livewire:components.notification-bell />
+        @endauth
         <label for="main-drawer" class="mr-3 lg:hidden">
             <x-icon name="o-bars-2" class="cursor-pointer" />
         </label>
     </x-slot:actions>
 </x-nav>
+
+{{-- Desktop Top Bar (notification bell only) --}}
+@auth
+    <div class="hidden lg:flex fixed top-3 right-4 z-40">
+        <livewire:components.notification-bell />
+    </div>
+@endauth
 
 <x-main>
     {{-- Sidebar --}}
@@ -129,10 +139,15 @@
                     <x-menu-item :title="__('lms.live_classes')" icon="o-video-camera" link="/admin/live-classes" />
                 </x-menu-sub>
 
+                <x-menu-sub title="Programs" icon="o-rectangle-stack">
+                    <x-menu-item title="All Programs"   icon="o-rectangle-stack" link="/admin/programs" />
+                </x-menu-sub>
+
                 <x-menu-sub :title="__('lms.finance')" icon="o-banknotes">
-                    <x-menu-item :title="__('lms.payments')" icon="o-credit-card" link="/admin/payments" />
+                    <x-menu-item :title="__('lms.payments')"      icon="o-credit-card" link="/admin/payments" />
                     <x-menu-item :title="__('lms.subscriptions')" icon="o-star" link="/admin/subscriptions" />
-                    <x-menu-item :title="__('lms.plans')" icon="o-clipboard-document-list" link="/admin/plans" />
+                    <x-menu-item title="Subscription History"    icon="o-clock" link="/admin/subscriptions/history" />
+                    <x-menu-item :title="__('lms.plans')"         icon="o-clipboard-document-list" link="/admin/plans" />
                 </x-menu-sub>
 
                 <x-menu-item :title="__('lms.announcements')" icon="o-megaphone" link="/admin/announcements" />
@@ -155,6 +170,7 @@
             @if(auth()->user()?->isTeacher())
                 <x-menu-item :title="__('lms.dashboard')" icon="o-chart-pie" link="/dashboard" />
                 <x-menu-item :title="__('lms.my_courses')" icon="o-cube" link="/teacher/courses" />
+                <x-menu-item title="My Programs" icon="o-rectangle-stack" link="/teacher/programs" />
                 <x-menu-item :title="__('lms.my_students')" icon="o-users" link="/teacher/students" />
                 <x-menu-item :title="__('lms.live_classes')" icon="o-video-camera" link="/teacher/live-classes" />
                 <x-menu-item :title="__('lms.assignments')" icon="o-pencil-square" link="/teacher/assignments" />
@@ -167,11 +183,29 @@
             @if(auth()->user()?->isStudent())
                 <x-menu-item :title="__('lms.dashboard')" icon="o-chart-pie" link="/dashboard" />
                 <x-menu-item :title="__('lms.my_courses')" icon="o-cube" link="/student/courses" />
+                <x-menu-item title="Programs" icon="o-rectangle-stack" link="/student/programs" />
+                <x-menu-item title="Islamic Learning" icon="o-moon" link="/student/islamic-courses" />
                 <x-menu-item :title="__('lms.live_classes')" icon="o-video-camera" link="/student/live-classes" />
                 <x-menu-item :title="__('lms.assignments')" icon="o-pencil-square" link="/student/assignments" />
                 <x-menu-item :title="__('lms.quizzes')" icon="o-clipboard-document-list" link="/student/quizzes" />
                 <x-menu-item :title="__('lms.my_progress')" icon="o-chart-bar" link="/student/progress" />
+                <x-menu-item title="My Subscription" icon="o-star" link="/student/subscriptions" />
                 <x-menu-item :title="__('lms.messages')" icon="o-envelope" link="/messages" />
+            @endif
+
+            {{-- INDIVIDUAL MENU --}}
+            @if(auth()->user()?->isIndividual())
+                <x-menu-item title="Dashboard"       icon="o-chart-pie"        link="/individual/dashboard" />
+                <x-menu-item title="Browse Programs" icon="o-rectangle-stack"  link="/individual/programs" />
+                <x-menu-item title="My Programs"     icon="o-bookmark"         link="/individual/my-programs" />
+                <x-menu-item title="Courses"         icon="o-book-open"        link="/individual/courses" />
+                <x-menu-separator />
+                <x-menu-sub title="Subscription" icon="o-star">
+                    <x-menu-item title="Plans"   icon="o-credit-card" link="/individual/subscriptions" />
+                    <x-menu-item title="History" icon="o-clock"       link="/individual/subscriptions/history" />
+                </x-menu-sub>
+                <x-menu-item title="Profile"         icon="o-user-circle"      link="/individual/profile" />
+                <x-menu-item title="Messages"        icon="o-envelope"         link="/messages" />
             @endif
 
             {{-- PARENT MENU --}}
