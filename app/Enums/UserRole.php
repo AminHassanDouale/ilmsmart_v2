@@ -4,13 +4,14 @@ namespace App\Enums;
 
 enum UserRole: string
 {
-    case Admin     = 'admin';
-    case Teacher   = 'teacher';
-    case Student   = 'student';
-    case Parent    = 'parent';
-    case Tutor     = 'tutor';
+    case Admin      = 'admin';
+    case Teacher    = 'teacher';
+    case Student    = 'student';
+    case Parent     = 'parent';
+    case Tutor      = 'tutor';
     case Accountant = 'accountant';
-    case Manager   = 'manager';
+    case Manager    = 'manager';
+    case Individual = 'individual';
 
     public function label(): string
     {
@@ -22,6 +23,7 @@ enum UserRole: string
             self::Tutor      => __('roles.tutor'),
             self::Accountant => __('roles.accountant'),
             self::Manager    => __('roles.manager'),
+            self::Individual => __('roles.individual'),
         };
     }
 
@@ -35,6 +37,7 @@ enum UserRole: string
             self::Tutor      => 'badge-secondary',
             self::Accountant => 'badge-warning',
             self::Manager    => 'badge-neutral',
+            self::Individual => 'badge-accent',
         };
     }
 
@@ -48,6 +51,7 @@ enum UserRole: string
             self::Tutor      => 'o-light-bulb',
             self::Accountant => 'o-calculator',
             self::Manager    => 'o-briefcase',
+            self::Individual => 'o-user-circle',
         };
     }
 
