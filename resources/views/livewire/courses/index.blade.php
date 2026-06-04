@@ -64,7 +64,7 @@ class extends Component
                       @click="$wire.drawer = true" class="btn-ghost" />
             @can('create', App\Models\Course::class)
                 <x-button :label="__('lms.create')" icon="o-plus"
-                          link="/courses/create" class="btn-primary" />
+                          link="/admin/courses" class="btn-primary" />
             @endcan
         </x-slot:actions>
     </x-header>
@@ -130,13 +130,22 @@ class extends Component
                         </span>
                     </div>
 
+                    @php
+                        $u = auth()->user();
+                        $viewLink = match(true) {
+                            $u?->isStudent()    => '/student/courses/'.$course->id,
+                            $u?->isIndividual() => '/individual/courses/'.$course->id,
+                            $u?->isAdmin()      => '/admin/courses/'.$course->id.'/manage',
+                            default             => '/teacher/courses',
+                        };
+                    @endphp
                     <div class="card-actions mt-3">
                         <x-button :label="__('lms.view')" icon="o-eye"
-                                  :link="'/courses/'.$course->id"
+                                  :link="$viewLink"
                                   class="btn-sm btn-ghost flex-1" />
                         @can('update', $course)
                             <x-button icon="o-pencil-square"
-                                      :link="'/courses/'.$course->id.'/edit'"
+                                      :link="'/admin/courses/'.$course->id.'/manage'"
                                       class="btn-sm btn-ghost" />
                         @endcan
                         @can('delete', $course)

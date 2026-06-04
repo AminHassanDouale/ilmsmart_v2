@@ -163,6 +163,14 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
+    | Shared course browse (auth-only generic listing — role-specific show
+    | routes handle detail pages: student.courses.show, individual.courses.show)
+    |--------------------------------------------------------------------------
+    */
+    Volt::route('/courses', 'courses.index')->name('courses');
+
+    /*
+    |--------------------------------------------------------------------------
     | Parent routes
     |--------------------------------------------------------------------------
     */
@@ -173,11 +181,4 @@ Route::middleware('auth')->group(function () {
         Volt::route('/payments',           'parent.payments.index')->name('payments');
     });
 
-    /*
-    |--------------------------------------------------------------------------
-    | Shared course viewer
-    |--------------------------------------------------------------------------
-    */
-    Volt::route('/courses',          'courses.index')->name('courses');
-    Volt::route('/courses/{course}', 'courses.show')->name('courses.show');
 });
